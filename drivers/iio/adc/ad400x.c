@@ -67,6 +67,7 @@ static int ad400x_write_reg(struct ad400x_state *st, uint8_t val)
 		.tx_buf		= st->data,
 		.len		= 4,
 		.bits_per_word	= st->num_bits,
+		.speed_hz	= 2000000,
 	};
 	struct spi_message m;
 
@@ -88,11 +89,13 @@ static int ad400x_read_reg(struct ad400x_state *st, unsigned int *val)
 	struct spi_transfer t = {0};
 
 	st->data[0] = AD400X_READ_COMMAND;
+	st->data[1] = 0xFF;
 
 	t.rx_buf = val;
 	t.tx_buf = st->data;
 	t.len = 2;
 	t.bits_per_word = 16; /* reg reads are only 16 clocks pulses */
+	t.speed_hz = 2000000;
 
 	spi_message_init_with_transfers(&m, &t, 1);
 
